@@ -1,3 +1,5 @@
+"use strict";
+
 const web3 = require("./lsx_scheme")
 
 function test() {
