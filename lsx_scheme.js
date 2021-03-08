@@ -52,6 +52,7 @@ class Client {
             }
             r = data.r; //链接上一个位置
         }
+        V.reverse();
         return V.join('');
     }
 }
@@ -78,7 +79,7 @@ class Server {
     let server = new Server()
     client.init(server)
     await server.init(client)
-    await client.edit("add", "China", "aaa")
+    await client.edit("add", "China", "44dCG1lr9PGHzrosB3AANBXLgKV2lOkojc1kaPzfxXGmCPKKWcIdgPPfvvY5aQpahmwg79enZioGy4hIMhCdKp5VxFd9PLwUjaAlN3qkQnfe3nEKNZSeP4Yt7yukJOYFxiPBvQJE5ZBWW3QwIqvvoDZ4lYTOifzbYKp7aIksweFU8yknsuy8p4JcNzH3uLrrGCs1qFI5nRmSZvGmR2wLDZVkksRzup2mxPMxlej1XElzgkVuc7OV4y8vTsZuih5EloAumyNHMp12El8PqPxaH1TuQ3PvLUbCqMrFEcCx9gVHkC9qQAlnVsqUzC2bJwSCjrKaqG4WOmIpSaMYStf1hpO35oWPkB3S29qNDdlZeV43mN55Y0oGbcVe8R2vZz4NjQl68zMhBzuTMMl4ecwGNyHcUH4maKs5Z1yxB8il95Nlf3NE7Zw4Kb3wQoO6A7uqRh4T5Fre8reuEaTSHTrCPyT3IA97wnkpTROkKnjTMHQQKCovlTQAEJUg6Inq0i09cQC732Snvq8nCMmgnnJkOWRTD8ShMQ6JsliKcNnaRozc1dTWZXhPwz9vIaSSfXjRq6fAiVSGMDbKtqdNpwweRday")
     let res = await client.query("China")
     console.log(res)
 })();
