@@ -47,18 +47,27 @@ class Client {
     async query(label) {
         let r = this.dx[label];
         let V = [];
+        let Vd = [];
         while (r !== null) {
             let e = await this.server.query(r);
             let data = AES256.decrypt(this.key, e, this.iv);
             data = JSON.parse(data);
             if (data.t === "add") {
                 V.push(data.b);
+            } else {
+                Vd.push(data.b);
             }
             r = data.r; //链接上一个位置
         }
         V.reverse();
         let stringified_result = "[" + V.join('') + "]";
-        return JSON.parse(stringified_result);
+        let results_containing_deleted_ones = JSON.parse(stringified_result);
+
+        Vd.reverse();
+        stringified_result = "[" + Vd.join('') + "]";
+        let deleted_results = JSON.parse(stringified_result);
+
+        return results_containing_deleted_ones.filter(el => !deleted_results.includes(el));
     }
 }
 
@@ -87,6 +96,7 @@ class Server {
     await client.edit("add", "China", {a: "aaa", b: "bbb"});
     await client.edit("add", "China", "bbbbbb");
     await client.edit("add", "China", {a: "aaa", b: "bbb"});
+    await client.edit("del", "China", "bbbbbb");
 
     let res = await client.query("China");
     console.log(res);
