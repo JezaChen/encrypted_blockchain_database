@@ -64,6 +64,7 @@ class Client {
         let results_containing_deleted_ones = JSON.parse(stringified_result);
 
         Vd.reverse();
+        if (Vd.length > 0 && Vd[0][0] === ',') Vd[0] = Vd[0].substr(1); //Vd第一个元素首字符可能会包含逗号，因此需要去掉
         stringified_result = "[" + Vd.join('') + "]";
         let deleted_results = JSON.parse(stringified_result);
 

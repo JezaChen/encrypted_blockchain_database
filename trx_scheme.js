@@ -44,7 +44,7 @@ class Client {
 
     async query(label) {
         let r_root = this.dx[label];
-        let V = [];
+        let V = [], Vd = [];
         while (r_root !== null) {
             let e = await this.server.query(r_root);
             let data = AES256.decrypt(this.key, e, this.iv);
@@ -61,6 +61,8 @@ class Client {
                 data = JSON.parse(data);
                 if (data.t === "add") {
                     V.push(data.b);
+                } else {
+                    Vd.push(data.b);
                 }
                 if (data.lp !== null) s.push(data.lp);
                 if (data.rp !== null) s.push(data.rp);
@@ -68,7 +70,14 @@ class Client {
         }
         V.reverse();
         let stringified_result = "[" + V.join('') + "]";
-        return JSON.parse(stringified_result);
+        let results_containing_deleted_ones = JSON.parse(stringified_result);
+
+        Vd.reverse();
+        if (Vd.length > 0 && Vd[0][0] === ',') Vd[0] = Vd[0].substr(1); //Vd第一个元素首字符可能会包含逗号，因此需要去掉
+        stringified_result = "[" + Vd.join('') + "]";
+        let deleted_results = JSON.parse(stringified_result);
+
+        return results_containing_deleted_ones.filter(el => !deleted_results.includes(el));
     }
 }
 
@@ -97,6 +106,7 @@ class Server {
     await client.edit("add", "China", {a: "aaa", b: "bbb"});
     await client.edit("add", "China", "bbbbbb");
     await client.edit("add", "China", {a: "aaa", b: "bbb"});
+    await client.edit("del", "China", "bbbbbb"); //todo 无法删除object类型元素
 
     let res = await client.query("China");
     console.log(res);
