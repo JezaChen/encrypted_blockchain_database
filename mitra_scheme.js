@@ -56,7 +56,7 @@ class Client {
         if (!Buffer.isBuffer(buf1) || !Buffer.isBuffer(buf2)) throw new Error("buf1 and buf2 should be Buffer!");
         if (buf1.length !== buf2.length) throw new Error("The length of buf1 should be same as that of buf2");
         let result = Buffer.alloc(buf1.length);
-        for (let i = 0; i < buf1.length; ++i) result = buf1[i] ^ buf2[i];
+        for (let i = 0; i < buf1.length; ++i) result[i] = buf1[i] ^ buf2[i];
         return result;
     }
 
@@ -66,7 +66,7 @@ class Client {
         let addr = HMAC_SHA256.digest(this.k,
             this.concat_w_file_cnt_num(keyword, this.file_cnt[keyword], 0)).toString("base64");
         let val = this.xor_buffer(this.concat_id_op(file_id, type),
-            HMAC_SHA256.digest(this.k, this.concat_w_file_cnt_num(keyword, this.file_cnt[keyword], 1)));
+            HMAC_SHA256.digest(this.k, this.concat_w_file_cnt_num(keyword, this.file_cnt[keyword], 1))).toString("base64");
         this.server.edit(addr, val);
     }
 
@@ -79,7 +79,7 @@ class Client {
         let f_w = await this.server.query(t_list);
         let r_w_add = [], r_w_del = [];
         for (let i = 1; i <= f_w.length; ++i) {
-            let tmp = this.xor_buffer(f_w[i - 1], HMAC_SHA256.digest(this.concat_w_file_cnt_num(keyword, i, 1)));
+            let tmp = this.xor_buffer(Buffer.from(f_w[i - 1], "base64"), HMAC_SHA256.digest(this.k, this.concat_w_file_cnt_num(keyword, i, 1)));
             tmp = this.read_id_op(tmp);
             if (tmp.op === "add")
                 r_w_add.push(tmp.id);
@@ -116,7 +116,7 @@ class Server {
     let server = new Server();
     client.init(server);
     await server.init(client);
-    await client.edit("add", "China", 1);
+    await client.edit("add", "China", 122);
 
     let res = await client.query("China");
     console.log(res);
