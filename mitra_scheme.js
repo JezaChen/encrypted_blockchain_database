@@ -117,6 +117,9 @@ class Server {
     client.init(server);
     await server.init(client);
     await client.edit("add", "China", 122);
+    await client.edit("add", "China", 223);
+    await client.edit("del", "China", 122);
+    await client.edit("add", "Chi", 221);
 
     let res = await client.query("China");
     console.log(res);
